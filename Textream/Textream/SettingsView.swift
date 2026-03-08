@@ -139,7 +139,7 @@ struct NotchPreviewContent: View {
     @Bindable var settings: NotchSettings
     let menuBarHeight: CGFloat
 
-    private static let loremWords = "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt".split(separator: " ").map(String.init)
+    private static let loremWords = "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor [pause] incididunt ut labore et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt".split(separator: " ").map(String.init)
 
     private let highlightedCount = 42
     @State private var previewWordProgress: Double = 0
@@ -198,6 +198,9 @@ struct NotchPreviewContent: View {
                         highlightedCharCount: settings.listeningMode == .wordTracking ? highlightedCount : Self.loremWords.count * 5,
                         font: settings.font,
                         highlightColor: settings.fontColorPreset.color,
+                        cueColor: settings.cueColorPreset.color,
+                        cueUnreadOpacity: settings.cueBrightness.unreadOpacity,
+                        cueReadOpacity: settings.cueBrightness.readOpacity,
                         smoothScroll: settings.listeningMode != .wordTracking,
                         smoothWordProgress: previewWordProgress,
                         isListening: settings.listeningMode != .wordTracking
@@ -559,6 +562,63 @@ struct SettingsView: View {
                         .buttonStyle(.plain)
                     }
                 }
+
+                // Cue Color
+                Text("Cue Color")
+                    .font(.system(size: 13, weight: .medium))
+
+                HStack(spacing: 8) {
+                    ForEach(FontColorPreset.allCases) { preset in
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                settings.cueColorPreset = preset
+                            }
+                        } label: {
+                            VStack(spacing: 6) {
+                                Circle()
+                                    .fill(preset.color)
+                                    .frame(width: 22, height: 22)
+                                    .overlay(
+                                        Circle()
+                                            .strokeBorder(Color.primary.opacity(0.15), lineWidth: 1)
+                                    )
+                                    .overlay(
+                                        settings.cueColorPreset == preset
+                                            ? Image(systemName: "checkmark")
+                                                .font(.system(size: 10, weight: .bold))
+                                                .foregroundStyle(preset == .white ? .black : .white)
+                                            : nil
+                                    )
+                                Text(preset.label)
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundStyle(settings.cueColorPreset == preset ? .primary : .secondary)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(settings.cueColorPreset == preset ? preset.color.opacity(0.1) : Color.primary.opacity(0.05))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .strokeBorder(settings.cueColorPreset == preset ? preset.color.opacity(0.4) : Color.clear, lineWidth: 1.5)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                // Cue Brightness
+                Text("Cue Brightness")
+                    .font(.system(size: 13, weight: .medium))
+
+                Picker("", selection: $settings.cueBrightness) {
+                    ForEach(CueBrightness.allCases) { brightness in
+                        Text(brightness.label).tag(brightness)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
 
                 Divider()
 
@@ -1261,6 +1321,8 @@ struct SettingsView: View {
         settings.fontSizePreset = .lg
         settings.fontFamilyPreset = .sans
         settings.fontColorPreset = .white
+        settings.cueColorPreset = .white
+        settings.cueBrightness = .dim
         settings.overlayMode = .pinned
         settings.notchDisplayMode = .followMouse
         settings.pinnedScreenID = 0

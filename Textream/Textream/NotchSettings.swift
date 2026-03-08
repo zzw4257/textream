@@ -128,6 +128,43 @@ enum FontColorPreset: String, CaseIterable, Identifiable {
     }
 }
 
+// MARK: - Cue Brightness
+
+enum CueBrightness: String, CaseIterable, Identifiable {
+    case dim, low, medium, bright
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .dim:    return "Dim"
+        case .low:    return "Low"
+        case .medium: return "Medium"
+        case .bright: return "Bright"
+        }
+    }
+
+    /// Opacity for unread annotations
+    var unreadOpacity: Double {
+        switch self {
+        case .dim:    return 0.2
+        case .low:    return 0.35
+        case .medium: return 0.5
+        case .bright: return 0.8
+        }
+    }
+
+    /// Opacity for already-read annotations
+    var readOpacity: Double {
+        switch self {
+        case .dim:    return 0.5
+        case .low:    return 0.6
+        case .medium: return 0.7
+        case .bright: return 1.0
+        }
+    }
+}
+
 // MARK: - Overlay Mode
 
 enum OverlayMode: String, CaseIterable, Identifiable {
@@ -305,6 +342,14 @@ class NotchSettings {
         didSet { UserDefaults.standard.set(fontColorPreset.rawValue, forKey: "fontColorPreset") }
     }
 
+    var cueColorPreset: FontColorPreset {
+        didSet { UserDefaults.standard.set(cueColorPreset.rawValue, forKey: "cueColorPreset") }
+    }
+
+    var cueBrightness: CueBrightness {
+        didSet { UserDefaults.standard.set(cueBrightness.rawValue, forKey: "cueBrightness") }
+    }
+
     var overlayMode: OverlayMode {
         didSet { UserDefaults.standard.set(overlayMode.rawValue, forKey: "overlayMode") }
     }
@@ -418,6 +463,8 @@ class NotchSettings {
         self.fontSizePreset = FontSizePreset(rawValue: UserDefaults.standard.string(forKey: "fontSizePreset") ?? "") ?? .lg
         self.fontFamilyPreset = FontFamilyPreset(rawValue: UserDefaults.standard.string(forKey: "fontFamilyPreset") ?? "") ?? .sans
         self.fontColorPreset = FontColorPreset(rawValue: UserDefaults.standard.string(forKey: "fontColorPreset") ?? "") ?? .white
+        self.cueColorPreset = FontColorPreset(rawValue: UserDefaults.standard.string(forKey: "cueColorPreset") ?? "") ?? .white
+        self.cueBrightness = CueBrightness(rawValue: UserDefaults.standard.string(forKey: "cueBrightness") ?? "") ?? .dim
         self.overlayMode = OverlayMode(rawValue: UserDefaults.standard.string(forKey: "overlayMode") ?? "") ?? .pinned
         self.notchDisplayMode = NotchDisplayMode(rawValue: UserDefaults.standard.string(forKey: "notchDisplayMode") ?? "") ?? .followMouse
         let savedPinnedScreenID = UserDefaults.standard.integer(forKey: "pinnedScreenID")

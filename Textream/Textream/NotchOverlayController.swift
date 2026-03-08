@@ -823,6 +823,9 @@ struct NotchOverlayView: View {
                 highlightedCharCount: effectiveCharCount,
                 font: NotchSettings.shared.font,
                 highlightColor: NotchSettings.shared.fontColorPreset.color,
+                cueColor: NotchSettings.shared.cueColorPreset.color,
+                cueUnreadOpacity: NotchSettings.shared.cueBrightness.unreadOpacity,
+                cueReadOpacity: NotchSettings.shared.cueBrightness.readOpacity,
                 onWordTap: { charOffset in
                     if listeningMode == .wordTracking {
                         speechRecognizer.jumpTo(charOffset: charOffset)
@@ -1298,6 +1301,9 @@ struct FloatingOverlayView: View {
                 highlightedCharCount: effectiveCharCount,
                 font: NotchSettings.shared.font,
                 highlightColor: NotchSettings.shared.fontColorPreset.color,
+                cueColor: NotchSettings.shared.cueColorPreset.color,
+                cueUnreadOpacity: NotchSettings.shared.cueBrightness.unreadOpacity,
+                cueReadOpacity: NotchSettings.shared.cueBrightness.readOpacity,
                 onWordTap: { charOffset in
                     if listeningMode == .wordTracking {
                         speechRecognizer.jumpTo(charOffset: charOffset)
