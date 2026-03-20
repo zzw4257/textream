@@ -5,22 +5,22 @@
 ```mermaid
 graph TD
     %% Main Application Layer
-    User((User)) --> |Input/Play| ContentView[ContentView\n(Editor & Playback Control)]
-    ContentView --> Service[TextreamService\n(App Core / State Manager)]
+    User((User)) --> |Input/Play| ContentView[ContentView \n Editor & Playback Control]
+    ContentView --> Service[TextreamService\n App Core / State Manager]
 
     %% Core Services
     subgraph Core Engine
-        Service --> |Read/Write| Settings[NotchSettings\n(Config Store)]
-        Service --> |Controls| Overlay[NotchOverlayController\n(UI Manager)]
-        Overlay --> |Starts| Speech[SpeechRecognizer\n(On-Device Tracking)]
-        Speech --> |Updates| Content[OverlayContent\n(State for Views)]
+        Service --> |Read/Write| Settings[NotchSettings\n Config Store]
+        Service --> |Controls| Overlay[NotchOverlayController\n UI Manager]
+        Overlay --> |Starts| Speech[SpeechRecognizer\n On-Device Tracking]
+        Speech --> |Updates| Content[OverlayContent\nState for Views]
         Content --> |Binds to| View[NotchOverlayView\n/ FloatingOverlayView]
     end
 
     %% Network Services
     subgraph Network Servers
-        Service --> |Starts| Browser[BrowserServer\n(Remote Viewer)]
-        Service --> |Starts| Director[DirectorServer\n(Remote Control & Editor)]
+        Service --> |Starts| Browser[BrowserServer\n Remote Viewer]
+        Service --> |Starts| Director[DirectorServer\n Remote Control & Editor]
         Browser --> |WebSocket State| RemoteUser((Remote Viewer))
         Director --> |WebSocket Cmds/State| RemoteDirector((Director))
         RemoteDirector --> |setText/updateText| Service
