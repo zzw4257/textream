@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="#download">Download</a> · <a href="#features">Features</a> · <a href="#how-it-works">How It Works</a> · <a href="#building-from-source">Build</a>
+  <a href="#download">Download</a> · <a href="#features">Features</a> · <a href="#how-it-works">How It Works</a> · <a href="#building-from-source">Build</a> · <a href="docs/ARCHITECTURE.md">Architecture Docs</a>
 </p>
 
 <p align="center">
@@ -166,6 +166,8 @@ Let someone else control your teleprompter remotely. A director can write, edit,
 1. **Paste your script** — Drop your talking points, interview questions, or full script into the text editor.
 2. **Hit play** — The Dynamic Island overlay slides down from the top of your screen.
 3. **Start speaking** — Words highlight in real-time as you read. When you finish, the overlay closes automatically.
+
+> **Developers:** To understand the feature structure, settings, and internal architecture, check out the [**Textream Architecture & Design Document**](docs/ARCHITECTURE.md).
 
 ## Building from Source
 
