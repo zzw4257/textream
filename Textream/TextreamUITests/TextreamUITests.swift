@@ -9,7 +9,19 @@ final class TextreamUITests: XCTestCase {
         app = XCUIApplication()
         app.launchArguments.append("-ui-testing")
         app.launchEnvironment["TEXTREAM_UI_TESTING"] = "1"
+        if app.state != .notRunning {
+            app.terminate()
+        }
         app.launch()
+        bringAppToFront()
+        XCTAssertTrue(app.staticTexts["uiharness.overlay.mode"].waitForExistence(timeout: 5))
+    }
+
+    override func tearDown() {
+        if app?.state != .notRunning {
+            app.terminate()
+        }
+        super.tearDown()
     }
 
     func testOverlayModeSwitchesExposeCurrentModeInHarness() {
@@ -101,6 +113,7 @@ final class TextreamUITests: XCTestCase {
         matching predicate: ((String) -> Bool)? = nil,
         timeout: TimeInterval = 2.5
     ) -> String {
+        bringAppToFront()
         let text = app.staticTexts[identifier]
         XCTAssertTrue(text.waitForExistence(timeout: timeout))
 
@@ -112,6 +125,7 @@ final class TextreamUITests: XCTestCase {
                 return lastValue
             }
             RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+            bringAppToFront()
             lastValue = rawValue(of: identifier)
         }
 
@@ -119,11 +133,33 @@ final class TextreamUITests: XCTestCase {
     }
 
     private func rawValue(of identifier: String) -> String {
+        bringAppToFront()
         let text = app.staticTexts[identifier]
         XCTAssertTrue(text.waitForExistence(timeout: 2))
         if let value = text.value as? String, !value.isEmpty {
             return value
         }
         return text.label
+    }
+
+    private func bringAppToFront(timeout: TimeInterval = 5) {
+        if app.state != .runningForeground {
+            app.activate()
+        }
+
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            switch app.state {
+            case .runningForeground:
+                return
+            case .notRunning:
+                XCTFail("UI harness app is not running")
+                return
+            default:
+                RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+            }
+        }
+
+        XCTFail("UI harness app failed to reach foreground state")
     }
 }

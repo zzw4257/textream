@@ -350,5 +350,12 @@ struct UITestHarnessRootView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .ignoresSafeArea()
         )
+        .onAppear {
+            DispatchQueue.main.async {
+                NSApp.setActivationPolicy(.regular)
+                NSApp.activate(ignoringOtherApps: true)
+                NSApp.windows.first(where: { !($0 is NSPanel) })?.makeKeyAndOrderFront(nil)
+            }
+        }
     }
 }
